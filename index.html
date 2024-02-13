@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alien Invasion</title>
+    <link rel="icon" href="Alien2.png" />
+    <style>
+      /* --Begin text styling-- */
+      h1 {
+        text-align: center;
+        font-family: "Orbitron", sans-serif;
+        color: whitesmoke;
+        text-decoration: underline;
+      }
+
+      p {
+        text-align: center;
+        margin-bottom: 10px;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 600;
+      }
+
+      #thirdLine {
+        font-weight: 800;
+        color: #da1616;
+        font-size: 20pt;
+        margin-top: 5px;
+        margin-bottom: 15px;
+      }
+
+      #levelCounter {
+        width: 80%;
+        margin-left: 10%;
+        margin-top: 0px;
+        border: 10px ridge silver;
+        background-color: gray;
+        box-shadow: 5px 5px 10px #ff0000;
+      }
+      /* --End text styling-- */
+
+      /* --Begin restart button styling-- */
+      #restart {
+        text-align: center;
+        margin-left: 42.5%;
+        width: 15%;
+        height: 50px;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 600;
+        background-color: #a8a8a8;
+        border: 5px outset silver;
+        box-shadow: 5px 5px 30px #00aeff;
+      }
+
+      #restart:hover {
+        background-color: whitesmoke;
+      }
+      /* --End restart button styling-- */
+
+      /* --Begin play area styling-- */
+      html {
+        background: rgb(0, 0, 0);
+        background: linear-gradient(
+          321deg,
+          rgba(0, 0, 0, 1) 0%,
+          rgba(101, 101, 101, 1) 80%
+        );
+        height: 100%;
+      }
+
+      #gameboard {
+        position: relative;
+        margin-left: 10%;
+        border: 10px ridge silver;
+        height: 500px;
+        width: 80%;
+        box-shadow: 5px 0px 10px #ff0000;
+        background-color: #8b8b8b;
+      }
+
+      #leftSide {
+        position: absolute;
+        width: 50%;
+        z-index: 1;
+      }
+
+      #rightSide {
+        margin-left: 50%;
+        position: absolute;
+        width: 50%;
+      }
+
+      #divider {
+        position: absolute;
+        border: 5px ridge;
+        height: 490px;
+        width: 0px;
+        margin-left: 50%;
+      }
+      /* --End play area styling-- */
+
+      /* --Begin floating images styling-- */
+      img {
+        position: absolute;
+        animation: float 2s ease infinite;
+        height: 100px;
+        width: 100px;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+      /* --End floating images styling-- */
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body onload="generateFaces()">
+    <h1 id="firstLine">Save Humanity!</h1>
+    <p id="secondLine">The aliens are taking over!</p>
+    <p id="thirdLine">
+      <strong>Kill the extra alien on the left side!</strong>
+    </p>
+
+    <div id="gameboard">
+      <div id="leftSide"></div>
+      <div id="rightSide"></div>
+      <div id="divider"></div>
+    </div>
+    <script>
+      let numberOfFaces = 5;
+      const theLeftSide = document.getElementById("leftSide");
+      const theRightSide = document.getElementById("rightSide");
+      let count = 1;
+
+      const levelCounter = document.createElement("H1");
+      const level = document.createTextNode(`Level ${count}`);
+      levelCounter.appendChild(level);
+      document.body.appendChild(levelCounter);
+      levelCounter.setAttribute("id", "levelCounter");
+      let firstLine = document.getElementById("firstLine");
+      let secondLine = document.getElementById("secondLine");
+      let thirdLine = document.getElementById("thirdLine");
+      let gameboard = document.getElementById("gameboard");
+
+      function generateFaces() {
+        for (let i = 0; i < numberOfFaces; i++) {
+          let face = document.createElement("img");
+          face.src = "Alien2.png";
+          randomTop = Math.floor(Math.random() * 399) + 1;
+          randomLeft = Math.floor(Math.random() * 399) + 1;
+          face.style.top = randomTop + "px";
+          face.style.left = randomLeft + "px";
+          theLeftSide.appendChild(face);
+        }
+        const leftSideImages = theLeftSide.cloneNode(true);
+        leftSideImages.removeChild(leftSideImages.lastChild);
+        theRightSide.appendChild(leftSideImages);
+        let leftLastChild = theLeftSide.lastChild;
+        leftLastChild.addEventListener("click", nextLevel);
+        document.body.addEventListener("click", gameOver);
+      }
+
+      function nextLevel() {
+        event.stopPropagation();
+        numberOfFaces += 5;
+        while (theLeftSide.firstChild) {
+          theLeftSide.removeChild(theLeftSide.firstChild);
+        }
+        while (theRightSide.firstChild) {
+          theRightSide.removeChild(theRightSide.firstChild);
+        }
+        generateFaces();
+        count++;
+        level.textContent = `Level ${count}`;
+        thirdLine.textContent =
+          "Stay calm! There's still only one extra on the left side!";
+      }
+
+      function gameOver() {
+        firstLine.textContent = "GAME OVER";
+        firstLine.style.color = "#da1616";
+        secondLine.textContent = "Don't worry... there's still hope.";
+        thirdLine.textContent = "TRY AGAIN";
+        gameboard.style.boxShadow = "5px 0px 100px #ff0000";
+        gameboard.style.backgroundColor = "#333232";
+        let leftLastChild = theLeftSide.lastChild;
+        while (theLeftSide.firstChild) {
+          theLeftSide.removeChild(theLeftSide.firstChild);
+        }
+        while (theRightSide.firstChild) {
+          theRightSide.removeChild(theRightSide.firstChild);
+        }
+        alert("DAMNIT! Don't worry, we have reinforcements on the way...");
+        alert(
+          `They threw ${count} waves at you... thank you for your service.`
+        );
+        leftLastChild.removeEventListener("click", nextLevel);
+        document.body.removeEventListener("click", gameOver);
+        numberOfFaces = 5;
+        count = 1;
+        restartButton = document.createElement("button");
+        restartButton.setAttribute("id", "restart");
+        document.body.appendChild(restartButton);
+        restartButton.textContent = "I've got more fight in me!";
+        restartButton.addEventListener("click", () => window.location.reload());
+      }
+    </script>
+  </body>
+</html>
